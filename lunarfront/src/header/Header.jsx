@@ -6,10 +6,14 @@ import {data} from '../Data.jsx'
 import { useState } from 'react'
 
 function Header() {
-
     const [search, setSearch] = useState('')
+    const [isSearching, setIsSearching] = useState(false)
 
-    console.log(search)
+    const filteredResults = data.filter(item => 
+        item.title.toLowerCase().includes(search.toLowerCase())
+    )
+
+    const showResults = search && isSearching && filteredResults.length > 0
 
     return (  
         <header className='header'>
@@ -29,11 +33,16 @@ function Header() {
             
             <div className='nav'>
                 <div className="search-container">
-                    <input type="text" onChange={(e) => setSearch(e.target.value)} id="input" placeholder="Enter movie title..."/>
+                    <input 
+                        type="text" 
+                        onChange={(e) => setSearch(e.target.value)}
+                        onFocus={() => setIsSearching(true)}
+                        onBlur={() => setTimeout(() => setIsSearching(false), 200)}
+                        id="input" 
+                        placeholder="Enter movie title..."
+                        value={search}
+                    />
                     <img src={searchLogo} className="search-icon"/>
-
-                    
-                    
                 </div>
                 <p className='reg'> Sign In </p>
                 <div className="user-icon-container">
@@ -46,24 +55,22 @@ function Header() {
                 </div>
             </div>
 
-        
-        <div className='results'>
-            {data.filter((item) => {
-                return search.toLowerCase() === '' 
-                ? item
-                : item.title.toLowerCase().includes(search);
-            }).map((item) => (
-                <div key={item.id} style={{ 
-                    display: 'flex', 
-                    gap: '1rem',
-                    padding: '0.5rem',
-                    borderBottom: '0.5px solid #eee'
-                }}>
-                <span style={{ minWidth: '50px' }}>{item.id}</span>
-                <span>{item.title}</span>
+            {showResults && (
+                <div className="results active">
+                    {filteredResults.map((item) => (
+                        <div key={item.id} style={{ 
+                            display: 'flex', 
+                            gap: '1rem',
+                            padding: '0.5rem',
+                            borderBottom: '0.5px solid #eee',
+                            color: 'white'
+                        }}>
+                        <span style={{ minWidth: '50px' }}>{item.id}</span>
+                        <span>{item.title}</span>
+                        </div>
+                    ))}
                 </div>
-            ))}
-        </div>
+            )}
         </header>
     );
 }
