@@ -2,8 +2,15 @@ import './Header.css'
 import userLogo from '../assets/user.png'
 import menuLogo from '../assets/menu.png'
 import searchLogo from '../assets/search.png'
+import {data} from '../Data.jsx'
+import { useState } from 'react'
 
 function Header() {
+
+    const [search, setSearch] = useState('')
+
+    console.log(search)
+
     return (  
         <header className='header'>
             <div className='logo'>
@@ -22,8 +29,11 @@ function Header() {
             
             <div className='nav'>
                 <div className="search-container">
-                    <input type="text" id="input" placeholder="Enter movie title..."/>
+                    <input type="text" onChange={(e) => setSearch(e.target.value)} id="input" placeholder="Enter movie title..."/>
                     <img src={searchLogo} className="search-icon"/>
+
+                    
+                    
                 </div>
                 <p className='reg'> Sign In </p>
                 <div className="user-icon-container">
@@ -35,6 +45,25 @@ function Header() {
                     </div>
                 </div>
             </div>
+
+        
+        <div className='results'>
+            {data.filter((item) => {
+                return search.toLowerCase() === '' 
+                ? item
+                : item.title.toLowerCase().includes(search);
+            }).map((item) => (
+                <div key={item.id} style={{ 
+                    display: 'flex', 
+                    gap: '1rem',
+                    padding: '0.5rem',
+                    borderBottom: '0.5px solid #eee'
+                }}>
+                <span style={{ minWidth: '50px' }}>{item.id}</span>
+                <span>{item.title}</span>
+                </div>
+            ))}
+        </div>
         </header>
     );
 }
